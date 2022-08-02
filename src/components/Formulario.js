@@ -1,8 +1,8 @@
 import React, {useState} from 'react'
-import {Button, Modal, Text, SafeAreaView, StyleSheet, TextInput, View, ScrollView} from 'react-native'
+import {Modal, Text, SafeAreaView, StyleSheet, TextInput, View, ScrollView, Pressable, Alert} from 'react-native'
 import DatePicker from 'react-native-date-picker'
 
-const Formulario = ({modalState}) => {
+const Formulario = ({modalState, setModalState, pacientes, setPacientes}) => {
 
   const [paciente, setPaciente] = useState('')
   const [propietario, setPropietario] = useState('')
@@ -10,6 +10,39 @@ const Formulario = ({modalState}) => {
   const [telefono, setTelefono] = useState('')
   const [fecha, setFecha] = useState(new Date())
   const [sintomas, setSintomas] = useState('')
+
+  const handleCita = () =>{
+    //Validar
+    if ([paciente, propietario, email, fecha, sintomas].includes('')) {
+      Alert.alert(
+        'Error',
+        'Todos los campos son obligatorios'
+      )
+      return
+    }
+
+    const nuevoPaciente = {
+      id: Date.now(),
+      paciente,
+      propietario,
+      email, 
+      telefono, 
+      fecha, 
+      sintomas
+    }
+
+
+    setPacientes([...pacientes, nuevoPaciente])
+    setModalState(!modalState)
+
+    setPaciente('')
+    setPropietario('')
+    setEmail('')
+    setTelefono('')
+    setFecha(new Date())
+    setSintomas('')
+
+  }
 
   return (
     <Modal
@@ -20,6 +53,12 @@ const Formulario = ({modalState}) => {
       <Text style={styles.titulo}>Nueva {''}
         <Text style={styles.tituloBold}>Cita</Text>
       </Text>
+      <Pressable
+        style={styles.btnCancelar}
+        onLongPress={() => setModalState(!modalState)}
+      >
+        <Text style={styles.btnCancelarTexto}>X Cancelar</Text>
+      </Pressable>
       <ScrollView> 
         <View style={styles.campo}>
           <Text style={styles.label}>Nombre Paciente</Text>
@@ -70,9 +109,14 @@ const Formulario = ({modalState}) => {
 
         <View style={styles.campo}>
           <Text style={styles.label}>Fecha Alta</Text>
-          <DatePicker
-            date={fecha}
-          />
+          <View style={styles.fechaContenedor}>
+            <DatePicker
+              date={fecha}
+              locale='es'
+              mode='date'
+              onDateChange={ (date) => setFecha(date)}
+            />
+          </View>
         </View>
 
         <View style={styles.campo}>
@@ -87,7 +131,12 @@ const Formulario = ({modalState}) => {
             numberOfLines={4}
           />
         </View>
-
+        <Pressable
+          style={styles.btnNuevaCita}
+          onPress={handleCita}
+        >
+          <Text style={styles.btnNuevaCitaTexto}>Agregar Paciente</Text>
+        </Pressable>
       </ScrollView> 
     </SafeAreaView>
     </Modal>
@@ -128,6 +177,40 @@ const styles = StyleSheet.create({
   },
   sintomasInput: {
     height: 100
+  },
+  fechaContenedor: {
+    backgroundColor: '#fff',
+    borderRadius: 10
+  },
+  btnCancelar: {
+    marginVertical: 30,
+    backgroundColor: '#5827a4',
+    marginHorizontal: 30,
+    padding: 15,
+    borderRadius: 10
+
+  },
+  btnCancelarTexto: {
+    color: '#fff',
+    textAlign: 'center',
+    fontWeight: '900', 
+    fontSize: 15,
+    textTransform: 'uppercase'
+  },
+  btnNuevaCita: {
+    marginVertical: 50,
+    backgroundColor: '#f59e0b',
+    marginHorizontal: 30,
+    paddingVertical: 15,
+    borderRadius: 10
+
+  }, 
+  btnNuevaCitaTexto: {
+    textAlign: 'center',
+    color: '#5827a4',
+    textTransform: 'uppercase',
+    fontWeight: '900',
+    fontSize: 16
   }
 })
 
