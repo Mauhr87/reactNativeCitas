@@ -5,7 +5,8 @@ import {
   StyleSheet, 
   Modal,
   Pressable, 
-  FlatList
+  FlatList, 
+  Alert
 } from 'react-native';
 import Formulario from './src/components/Formulario';
 import Paciente from './src/components/Paciente';
@@ -15,6 +16,31 @@ const App = () => {
 
   const [modalState, setModalState] = useState(false) 
   const [pacientes, setPacientes] = useState([])
+  const [paciente, setPaciente] = useState({})
+
+  const pacienteEditar = id => {
+    const pacienteEditar = pacientes.filter( paciente => paciente.id === id)
+    setPaciente(pacienteEditar[0])
+
+  }
+
+  const pacienteEliminar = id => {
+    Alert.alert(
+      '¿Deseas eliminar este paciente?',
+      'Un paciente eliminado no se puede recuperar',
+      [
+        {text: 'Cancelar'},
+        {text: 'Si Eliminar', onPress: () => {
+          const pacientesActualizados = pacientes.filter( pacienteState => pacienteState.id !== id)
+          setPacientes(pacientesActualizados)
+        }}
+      ]
+    )
+    // const pacienteEliminar = pacientes.filter( paciente => paciente.id != id)
+    // console.log('Eliminando', id)
+    // setPaciente(pacienteEditar[0])
+  }
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -40,6 +66,9 @@ const App = () => {
             return (
               <Paciente
                 item={item}
+                pacienteEditar={pacienteEditar}
+                pacienteEliminar={pacienteEliminar}
+                setModalState={setModalState}
               />
             )
           }}
@@ -51,6 +80,8 @@ const App = () => {
         setModalState={setModalState}
         pacientes={pacientes}
         setPacientes={setPacientes}
+        paciente={paciente}
+        setPaciente={setPaciente}
       />
     </SafeAreaView>
   );
