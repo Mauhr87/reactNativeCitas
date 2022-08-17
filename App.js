@@ -8,8 +8,9 @@ import {
   FlatList, 
   Alert
 } from 'react-native';
-import Formulario from './src/components/Formulario';
-import Paciente from './src/components/Paciente';
+import Formulario from './src/components/Formulario'
+import Paciente from './src/components/Paciente'
+import InformacionPaciente from './src/components/InformacionPaciente'
 
 
 const App = () => {
@@ -17,6 +18,7 @@ const App = () => {
   const [modalState, setModalState] = useState(false) 
   const [pacientes, setPacientes] = useState([])
   const [paciente, setPaciente] = useState({})
+  const [modalPaciente, setModalPaciente] = useState(false)
 
   const pacienteEditar = id => {
     const pacienteEditar = pacientes.filter( paciente => paciente.id === id)
@@ -36,11 +38,12 @@ const App = () => {
         }}
       ]
     )
-    // const pacienteEliminar = pacientes.filter( paciente => paciente.id != id)
-    // console.log('Eliminando', id)
-    // setPaciente(pacienteEditar[0])
+
   }
 
+  const cerrarmodal = () => {
+    setModalState(false)
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -69,20 +72,36 @@ const App = () => {
                 pacienteEditar={pacienteEditar}
                 pacienteEliminar={pacienteEliminar}
                 setModalState={setModalState}
+                setPaciente={setPaciente}
+                setModalPaciente={setModalPaciente}
               />
             )
           }}
         />
       }
 
-      <Formulario
-        modalState={modalState}
-        setModalState={setModalState}
-        pacientes={pacientes}
-        setPacientes={setPacientes}
+      {modalState && (
+        <Formulario
+          cerrarmodal={cerrarmodal}
+          pacientes={pacientes}
+          setPacientes={setPacientes}
+          paciente={paciente}
+          setPaciente={setPaciente}
+        />
+      )}
+
+      <Modal
+        animationType='fade'
+        visible={modalPaciente}
         paciente={paciente}
-        setPaciente={setPaciente}
-      />
+      >
+        <InformacionPaciente
+          paciente={paciente}
+          setModalPaciente={setModalPaciente}
+          setPaciente={setPaciente}
+        />
+      </Modal>
+
     </SafeAreaView>
   );
 };
